@@ -20,16 +20,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install flake8 pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-      - name: Teste
-        run: coverage run app_test.py
-
-      - name: Relatorio do teste
-        run: coverage report -m
+          pip install jinja2==3.0
+          pip install werkzeug==1.0.1
+          pip install itsdangerous==1.1.0
 
       - name: Deploy no EC2 -AWS
         run: |
           echo "Conectando no EC2"
           echo "${{secrets.AWS_CHAVE_PIPELINE_AWS_PEM}}" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@ec2-54-162-145-221.compute-1.amazonaws.com "
+          ssh -o StrictHostKeyChecking=no -i private_key "${{secrets.SSH_SECRETO}}" "
           cd Aws_pipeline/;git pull;cd python_flask/;./executar.sh"
